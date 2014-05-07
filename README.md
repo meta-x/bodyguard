@@ -53,7 +53,7 @@ The security policy defines what is the default access to the resources (`:defau
 ```
 
 ### 3. Set a 16 Byte key to be used in the ciphering of the session cookie
-(This is a ring.middleware.session.cookie config, not bodyguard per se)
+(This is a `ring.middleware.session.cookie` config, not `bodyguard` per se)
 
 `ring.middleware.session.cookie` uses AES+CBC+PKCS5Padding to encrypt the data
     (def session-cookie-key "16bytekeyforaes!")
