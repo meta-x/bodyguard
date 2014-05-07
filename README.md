@@ -8,7 +8,7 @@ An opinionated Clojure/Ring library designed for authentication and authorizatio
 
 ## Example
 
-run lein ring server in `examples/whitney`
+run `lein ring server` in `examples/whitney`
 
 This will launch a webserver and open your browser in http://localhost:3000, showing a series of links that should be self-explanatory.
 
@@ -18,7 +18,7 @@ This will launch a webserver and open your browser in http://localhost:3000, sho
 
 Add
 
-  [bodyguard "0.1"]
+    [bodyguard "0.1"]
 
 to your leiningen `:dependencies`
 
@@ -27,8 +27,10 @@ to your leiningen `:dependencies`
 ## Usage
 
 ### 1. Require it
+```
 (:require [bodyguard.auth :as bg-auth]
           [bodyguard.utils :as bg-utils])
+```
 
 ### 2. Define a security policy and (optionally) an authentication policy
 The authentication policy defines how to determine if the user is authenticated or not.
@@ -52,8 +54,9 @@ The security policy defines what is the default access to the resources (`:defau
 
 ### 3. Set a 16 Byte key to be used in the ciphering of the session cookie
 (This is a ring.middleware.session.cookie config, not bodyguard per se)
-ring.middleware.session.cookie uses AES+CBC+PKCS5Padding to encrypt the data
-(def session-cookie-key "16bytekeyforaes!")
+
+`ring.middleware.session.cookie` uses AES+CBC+PKCS5Padding to encrypt the data
+    (def session-cookie-key "16bytekeyforaes!")
 
 ### 4. Use the middleware (don't forget that order matters!)
 
