@@ -1,4 +1,4 @@
-(ns bodyguard.core.example
+(ns whitney.core
   (:use [compojure.core]
         [cheshire.core]
         [ring.util.response])
@@ -7,7 +7,6 @@
             [ring.middleware.json :as ring-json]
             [ring.middleware.session :as ring-session]
             [ring.middleware.session.cookie :as ring-session-cookie]
-            [ring.adapter.jetty :as jetty]
             [bodyguard.auth :as bg-auth]
             [bodyguard.utils :as bg-utils]
 ))
