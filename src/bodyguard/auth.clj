@@ -14,7 +14,17 @@
 (defn on-authorization-fail [request]
   {:status 403 :body "not authorized"})
 
+(defn wrap-auth-to-params [handler]
+  "This middleware adds the session 'auth' object into the request parameters
+  for easy access in the handler function."
+  (fn [request]
+    (handler (assoc-auth-to-params request))
+  ))
+
 (defn wrap-authentication
+  "Authentication middleware: verifies if the target resource+method is
+  protected, if the user is authenticated, the default access policy and acts
+  accordingly."
   ([handler sec-policy] (wrap-authentication handler sec-policy default-authentication-policy))
   ([handler sec-policy auth-policy]
   (fn [request]
@@ -28,19 +38,15 @@
         (handler request))
   ))))
 
-(defn wrap-auth-to-params [handler]
-  "This middleware is responsible for putting the session 'auth' object into
-  the request parameters for easy access in the handler function."
-  (fn [request]
-    (handler (assoc-auth-to-params request))
-  ))
-
 (defn wrap-authorization [handler sec-policy]
+  "Authorization middleware: verifies if the user is authorized to access the
+  resource+method and acts accordingly."
   (fn [request]
     (let [target-uri-route (get-route-def (:uri request) (:routes sec-policy))
           target-uri-roles (get-route-roles target-uri-route)
           is-protected-method (matches-method? (:request-method request) (get-route-methods target-uri-route))
           current-user-roles (get-current-user-roles request)]
+      ; TODO: should :default-access sec-policy be checked here?
       (if (or (not is-protected-method)
               (nil? target-uri-route)
               (is-in-role? current-user-roles target-uri-roles))

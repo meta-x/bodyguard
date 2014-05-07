@@ -1,8 +1,8 @@
 (defproject bodyguard "0.1"
   :description "An opinionated Clojure/Ring library designed for authentication and authorization in web applications and services."
   :license {
-    :name "Eclipse Public License"
-    :url "http://www.eclipse.org/legal/epl-v10.html"
+    :name "The MIT License"
+    :url "http://opensource.org/licenses/MIT"
   }
   :dependencies [
     [org.clojure/clojure "1.6.0"]

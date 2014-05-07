@@ -1,4 +1,4 @@
-(ns bodyguard.test.example
+(ns bodyguard.core.example
   (:use [compojure.core]
         [cheshire.core]
         [ring.util.response])
