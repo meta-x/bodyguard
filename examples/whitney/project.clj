@@ -6,8 +6,7 @@
   }
   :dependencies [
     [org.clojure/clojure "1.6.0"]
-    [bodyguard "0.1"]
-    [org.mindrot/jbcrypt "0.3m"]
+    [bodyguard "0.1b"]
     [ring/ring-core "1.2.2"]
     [ring/ring-json "0.3.1"]
     [compojure "1.1.6"]
