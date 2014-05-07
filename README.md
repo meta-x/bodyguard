@@ -4,73 +4,88 @@ ATTN: beta version! use at your own risk!
 
 An opinionated Clojure/Ring library designed for authentication and authorization in web applications and services.
 
+
+
 ## Example
 
-in `examples/example.clj`
+run lein ring server in `examples/whitney`
 
-lein ring server
+This will launch a webserver and open your browser in http://localhost:3000, showing a series of links that should be self-explanatory.
+
+
 
 ## Installation
+
+Add
+
+  [bodyguard "0.1"]
+
+to your leiningen `:dependencies`
 
 
 
 ## Usage
 
-### dependencies
-ring-session
-ring-json
-
-### require it
+### 1. Require it
 (:require [bodyguard.auth :as bg-auth]
           [bodyguard.utils :as bg-utils])
 
-### define a security policy and optionally an authentication policy
-authentication policy: how to determine if the user is authenticated or not
-defaults to checking if the `request` object contains a valid session cookie
-you can customize this to check against a persistent cookie store or something else (e.g. token based authentication)
+### 2. Define a security policy and (optionally) an authentication policy
+The authentication policy defines how to determine if the user is authenticated or not.
+[Defaults](https://github.com/meta-x/bodyguard/blob/master/src/bodyguard/auth.clj#L6) to checking if the `request` object contains a valid session cookie. You can/should customize this for a more complete authentication flow.
 
-security policy: what's the default access to the resources, what resources need to be protected and how should they be protected, what to do in case auth fails
-you must define a strategy for your own needs
+The security policy defines what is the default access to the resources (`:default-access`), what resources need to be protected and how should they be protected (`:routes`) and (optionally) what to do in case auth fails (`:on-authentication-fail`/`:on-authorization-fail`). You must define a strategy for your own needs.
 
+```
 (def security-policy
   {
-    :default-access :anon ; :anon/whitelisting vs :auth/blacklisting - default protection for non-specified routes
+    :default-access :anon ; :auth|:anon - default protection for non-specified routes
     :routes { ; map with routes and required roles; {#"uri" :any} | {:roles #{:admin} :methods #{:post}}
       #"/needs-authentication$" #{:user}
       #"/needs-authorization$" #{:admin}
+      #"/something" {:roles #{:user} :methods #{:post}} ; only requires user role for POST methods
     }
-    :on-authentication-fail (fn [auth-obj] {:status 401 :body "my custom 401 response"})
-    :on-authorization-fail (fn [auth-obj required-roles] {:status 403 :body "my custom 403 response"})
+    :on-authentication-fail (fn [request] {:status 401 :body "my custom 401 response"})
+    :on-authorization-fail (fn [request] {:status 403 :body "my custom 403 response"})
   })
+```
 
-### define a 16 byte key to be used in the ciphering of the session cookie
-; (this is a ring.middleware.session.cookie config, not bodyguard per se)
-; ring.middleware.session.cookie uses AES+CBC+PKCS5Padding to encrypt the data
+### 3. Set a 16 Byte key to be used in the ciphering of the session cookie
+(This is a ring.middleware.session.cookie config, not bodyguard per se)
+ring.middleware.session.cookie uses AES+CBC+PKCS5Padding to encrypt the data
 (def session-cookie-key "16bytekeyforaes!")
 
-### use wrappers
-; don't forget that order matters
+### 4. Use the middleware (don't forget that order matters!)
+
+`wrap-auth-to-params` adds the session 'auth' object into the request parameters for easy access in the handler function. It is an optional middleware. Requires the use of `ring.middleware.nested-params/wrap-nested-params` (automatically included if you're using any of compojure's `handler` functions).
+
+`wrap-authentication` is the authentication middleware. It verifies if the target resource+method is protected, if the user is authenticated, the default access policy and acts accordingly.
+
+`wrap-authorization` is the authorization middleware. Verifies if the user is authorized to access the resource+method and acts accordingly. It is an optional middleware. If you're using this middleware, you MUST use `wrap-authentication`.
+
+```
 (def app
-  (-> (handler/api app-routes) ; if using compojure
-      (bg-auth/wrap-auth-to-params)
+  (-> (handler/api app-routes)
       (bg-auth/wrap-authorization security-policy)
       (bg-auth/wrap-authentication security-policy)
+      (bg-auth/wrap-auth-to-params)
       (ring-json/wrap-json-body)
       (ring-json/wrap-json-response)
       (ring-session/wrap-session {:store (ring-session-cookie/cookie-store {:key session-cookie-key})})
   ))
+```
 
-### your application code
-set to your auth object to match your security policy using bodyguard's utils functions
-`bg-utils/set-current-auth`, `bg-utils/del-current-auth`, `bg-utils/bcrypt-hash`, `bg-utils/bcrypt-verify`
+### 5. implement your application code
+Set your `auth` object to match your security policy using bodyguard's utils functions: `bg-utils/set-current-auth`, `bg-utils/del-current-auth`, `bg-utils/bcrypt-hash`, `bg-utils/bcrypt-verify`
 
-e.g.
-in your sign-in/up functions you should return the Set-Cookie header - this is done by using set-current-auth response auth-obj and returning it's value
+In your sign-in/up handlers you should return a `Set-Cookie` header with the bodyguard session. This is done by using `(set-current-auth response auth-obj)` and returning the new response in your handlers.
 
-in your sign-out function you should clean the session by using del-current-auth and returning it's vlaue
+In your `sign-out` function you should clean the session by using `del-current-auth` and returning it's value.
+
+
 
 ## How does it work?
-Bodyguard is just a simple library -  a set of functions that glue together in an opinionated way. But since one of the goals is to be flexible enough for anyone to configure to their application's needs, there is a fair amount of manual work.
+Bodyguard is just a simple library -  a set of functions that glue together in an opinionated way. But since one of the goals is to be flexible enough for anyone to configure it to their application's needs, there is a fair amount of manual work.
 
 ; /sign/in
 validate credentials
@@ -86,13 +101,11 @@ wrap-auth-to-params retrieves the auth object that is in the session cookie and 
 wrap-authentication checks if the endpoint needs authentication and if the session cookie has the authentication object
 wrap-authorization checks if the endpoint needs authorization and if the current user has access
 
-
 ; security policy
 I feel like it's better to have a separate security policy from the routing.
 It allows for composability and doesn't tie the routing code (compojure, moustache, etc) to the auth library.
 I can understand any objections since it promotes a little bit of duplication (changing your routes will force you to remember to change the security policy).
 I'm open for suggestions in how to improve this (e.g. some kind of meta-routes) or optional integration to compojure's routes.
-
 
 ## License
 
