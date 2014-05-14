@@ -1,5 +1,5 @@
-(ns bodyguard.auth
-  (:use [bodyguard.utils])
+(ns mx.bodyguard.auth
+  (:use [mx.bodyguard.utils])
 )
 
 ; default authentication policy
@@ -20,6 +20,13 @@
   (fn [request]
     (handler (assoc-auth-to-params request))
   ))
+; TODO:
+; wrap-auth-to-params should take an optional user-defined-fn param that allows you a desired args to params
+; instead of the hardcoded :auth
+; (defn some-fn-defined-by-user [request]
+;   returns a map {:a 1 :b 2} (values obtained from the request)
+;   )
+; the map will be assoc-ed into :params
 
 (defn wrap-authentication
   "Authentication middleware: verifies if the target resource+method is

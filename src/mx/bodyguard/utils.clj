@@ -1,9 +1,6 @@
-(ns bodyguard.utils
+(ns mx.bodyguard.utils
   (:import org.mindrot.jbcrypt.BCrypt)
-  (:require [ring.util.response :as ring-rsp]
-            [ring.middleware.session :as ring-session]
-            [ring.middleware.session.cookie :as ring-session-cookie]
-))
+)
 
 ; middleware helpers
 
@@ -81,6 +78,7 @@
     (assoc request :params new-params)))
 
 ; bcrypt stuff (copied over from cemerick/friend)
+; TODO: should probably be removed and moved to it's own crypto ns
 
 (defn bcrypt-hash [password & {:keys [work-factor]}]
   "Hashes a given plaintext password using bcrypt and an optional

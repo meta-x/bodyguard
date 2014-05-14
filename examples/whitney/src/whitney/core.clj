@@ -7,8 +7,8 @@
             [ring.middleware.json :as ring-json]
             [ring.middleware.session :as ring-session]
             [ring.middleware.session.cookie :as ring-session-cookie]
-            [bodyguard.auth :as bg-auth]
-            [bodyguard.utils :as bg-utils]
+            [mx.bodyguard.auth :as bg-auth]
+            [mx.bodyguard.utils :as bg-utils]
 ))
 
 ; helpers

@@ -7,7 +7,6 @@
   }
   :dependencies [
     [org.clojure/clojure "1.6.0"]
-    [ring/ring-core "1.2.2"]
     [org.mindrot/jbcrypt "0.3m"]
   ]
   :deploy-repositories [
