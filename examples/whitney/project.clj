@@ -1,5 +1,5 @@
 (defproject whitney "0.1"
-  :description "An example of using Bodyguard."
+  :description "An example of using bodyguard."
   :license {
     :name "The MIT License"
     :url "http://opensource.org/licenses/MIT"
