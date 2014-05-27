@@ -52,7 +52,7 @@ The security policy defines what is the default access to the resources (`:defau
 ```
 
 The authentication policy defines how to determine if the user is authenticated or not.
-[Defaults](/src/bodyguard/auth.clj#L6?raw=true) to checking if the `request` object contains a valid session cookie. You can/should customize this for a more complete authentication flow.
+[Defaults](https://github.com/meta-x/bodyguard/blob/master/src/bodyguard/auth.clj#L6) to checking if the `request` object contains a valid session cookie. You can/should customize this for a more complete authentication flow.
 
 ```clojure
 (def authentication-policy
