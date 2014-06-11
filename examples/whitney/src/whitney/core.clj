@@ -8,29 +8,34 @@
             [ring.middleware.session :as ring-session]
             [ring.middleware.session.cookie :as ring-session-cookie]
             [mx.bodyguard.auth :as bg-auth]
-            [mx.bodyguard.utils :as bg-utils]
-))
+            [mx.bodyguard.utils :as bg-utils]))
+
+; TODO: bug! set-current-auth operates on the request obj, not the response...
 
 ; helpers
 
-(defn set-auth [auth]
+(defn set-auth
+  [auth]
   (let [cur-rsp (response {:auth auth})
         new-rsp (bg-utils/set-current-auth cur-rsp auth)]
     new-rsp))
 
 ; web api handlers
 
-(defn sign-in-user []
+(defn sign-in-user
+  []
   (let [auth {:email "user.kevin.costner@bodyguard.something" :roles #{:user}} ; mock auth obj
         response (set-auth auth)]
     response))
 
-(defn sign-in-admin []
+(defn sign-in-admin
+  []
   (let [auth {:email "admin.kevin.costner@bodyguard.something" :roles #{:admin :user}} ; mock auth obj
         response (set-auth auth)]
     response))
 
-(defn sign-out [request]
+(defn sign-out
+  [request]
   (let [cur-rsp (response "signed out")
         new-rsp (bg-utils/del-current-auth cur-rsp)]
     new-rsp))
@@ -55,8 +60,7 @@
   (GET "/sign/out" request (sign-out request))
 
   (route/resources "/")
-  (route/not-found "Not Found")
-)
+  (route/not-found "Not Found"))
 
 ; auth definition
 
@@ -75,11 +79,11 @@
 ; app definition
 
 (def app
-  (-> (handler/api app-routes)
+  (-> app-routes
+      (handler/api)
       (bg-auth/wrap-authorization security-policy)
       (bg-auth/wrap-authentication security-policy)
       (bg-auth/wrap-auth-to-params)
       (ring-json/wrap-json-body)
       (ring-json/wrap-json-response)
-      (ring-session/wrap-session {:store (ring-session-cookie/cookie-store {:key "16bytekeyforaes!"})})
-  ))
+      (ring-session/wrap-session {:store (ring-session-cookie/cookie-store {:key "16bytekeyforaes!"})})))

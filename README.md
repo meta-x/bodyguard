@@ -20,7 +20,7 @@ This will launch a webserver and open your browser in http://localhost:3000, sho
 
 Add
 
-    [bodyguard "0.2b"]
+[![Current Version](https://clojars.org/bodyguard/latest-version.svg)](https://clojars.org/bodyguard)
 
 to your leiningen `:dependencies`
 
