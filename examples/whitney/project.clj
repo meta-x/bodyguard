@@ -6,7 +6,7 @@
   }
   :dependencies [
     [org.clojure/clojure "1.6.0"]
-    [bodyguard "0.2b"]
+    [bodyguard "0.1.0-beta3"]
     [ring/ring-core "1.2.2"]
     [ring/ring-json "0.3.1"]
     [compojure "1.1.6"]
