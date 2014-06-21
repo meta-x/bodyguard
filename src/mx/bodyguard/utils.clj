@@ -1,4 +1,5 @@
 (ns mx.bodyguard.utils
+  (:require [clojure.set :as cljset])
   (:import org.mindrot.jbcrypt.BCrypt))
 
 ; middleware helpers
@@ -77,7 +78,7 @@
   "Is the user in any of the required roles?"
   [user-roles req-roles]
   (or (route-allows-any-role req-roles)
-    (not (empty? (clojure.set/intersection user-roles req-roles)))))
+    (not (empty? (cljset/intersection user-roles req-roles)))))
 
 ; put auth as a request parameter
 
