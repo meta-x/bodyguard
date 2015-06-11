@@ -18,17 +18,11 @@
 
 (defn wrap-auth-to-params
   "This middleware adds the session 'auth' object into the request parameters
-  for easy access in the handler function."
-  [handler]
+  for easy access in the handler function. Optional `auth-key` is the name of
+  the auth object in the request parameters maps - defaults to `:mx.bodyguard.utils/auth`."
+  [handler & [auth-key]]
   (fn [request]
-    ; TODO:
-    ; wrap-auth-to-params should take an optional user-defined-fn param that allows you to specify the name of the desired args in :params
-    ; instead of the hardcoded :auth
-    ; (defn some-fn-defined-by-user [request]
-    ;   returns a map {:a 1 :b 2} (values obtained from the request)
-    ;   )
-    ; the map will be assoc-ed into :params
-    (handler (assoc-auth-to-params request))))
+    (handler (assoc-auth-to-params request auth-key))))
 
 (defn wrap-authentication
   "Authentication middleware: verifies if the target resource+method is

@@ -57,6 +57,10 @@
 (defn del-current-auth
   "Removes the auth object from the session."
   [request]
+  ; TODO: this should not remove the whole :session map but be more precise
+  ; e.g. receive an arg key that's for the auth object to delete
+  ; is it really an issue? the cookie is domain specific, so we're deleting the
+  ; session that belongs to this domain and not some other domain...
   (let [cur-session (:session request)
         new-session (dissoc cur-session ::bodyguard)]
     ; returns the request object with the replaced :session object
@@ -84,10 +88,11 @@
 
 (defn assoc-auth-to-params
   "Adds the auth object to the request :params"
-  [request]
-  (let [auth (get-current-auth request)
+  [request auth-key]
+  (let [auth-key (or auth-key ::auth)
+        auth (get-current-auth request)
         cur-params (:params request)
-        new-params (assoc cur-params ::auth auth)]
+        new-params (assoc cur-params auth-key auth)]
     (assoc request :params new-params)))
 
 ; bcrypt stuff (copied over from cemerick/friend)
