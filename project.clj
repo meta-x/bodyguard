@@ -1,4 +1,4 @@
-(defproject bodyguard "0.1.0-beta3"
+(defproject bodyguard "0.1.0-beta4"
   :description "An opinionated Clojure/Ring library designed for authentication and authorization in web applications and services."
   :url "https://github.com/meta-x/bodyguard"
   :license {
