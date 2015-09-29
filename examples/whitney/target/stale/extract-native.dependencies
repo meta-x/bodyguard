@@ -1,1 +1,0 @@
-([:dependencies ([ring-server/ring-server "0.3.1"] [org.clojure/clojure "1.6.0"] [bodyguard/bodyguard "0.2b"] [ring/ring-core "1.2.2"] [ring/ring-json "0.3.1"] [compojure/compojure "1.1.6"] [cheshire/cheshire "5.2.0"] [org.clojure/tools.nrepl "0.2.3" :exclusions ([org.clojure/clojure])] [clojure-complete/clojure-complete "0.2.3" :exclusions ([org.clojure/clojure])])])

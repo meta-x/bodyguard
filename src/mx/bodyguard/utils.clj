@@ -1,6 +1,6 @@
 (ns mx.bodyguard.utils
   (:require [clojure.set :as cljset])
-  (:import org.mindrot.jbcrypt.BCrypt))
+  )
 
 ; middleware helpers
 
@@ -36,8 +36,7 @@
   [request sec-policy]
   (let [target-uri-route (get-route-def (:uri request) (:routes sec-policy))
         target-uri-roles (get-route-roles target-uri-route)]
-    target-uri-roles
-  ))
+    target-uri-roles))
 
 ; auth functions
 
@@ -94,20 +93,3 @@
         cur-params (:params request)
         new-params (assoc cur-params auth-key auth)]
     (assoc request :params new-params)))
-
-; bcrypt stuff (copied over from cemerick/friend)
-; TODO: should probably be removed and moved to it's own crypto ns
-
-(defn bcrypt-hash
-  "Hashes a given plaintext password using bcrypt and an optional
-   :work-factor (defaults to 10 as of this writing).  Should be used to hash
-   passwords included in stored user credentials that are to be later verified
-   using `bcrypt-credential-fn`."
-  [password & {:keys [work-factor]}]
-  (BCrypt/hashpw password (if work-factor (BCrypt/gensalt work-factor) (BCrypt/gensalt))))
-
-(defn bcrypt-verify
-  "Returns true if the plaintext [password] corresponds to [h]ash,
-  the result of previously hashing that password."
-  [password h]
-  (BCrypt/checkpw password h))
