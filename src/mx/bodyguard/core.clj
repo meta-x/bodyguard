@@ -1,4 +1,4 @@
-(ns mx.bodyguard.auth
+(ns mx.bodyguard.core
   (:require [mx.bodyguard.defaults :refer [default-auth-config]]
             [mx.bodyguard.auth :refer :all]))
 
