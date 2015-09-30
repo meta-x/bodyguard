@@ -2,18 +2,18 @@
 
 An opinionated Clojure/Ring library designed for authentication and authorization in web applications and services.
 
-ATTN: under development!
+ATTN: massively revamped; docs to be updated
 
 Please give feedback/suggestions/etc through github issues.
 
 
-
+<!--
 ## Example
 
 run `lein ring server` in `examples/whitney`
 
 This will launch a webserver and open your browser in http://localhost:3000, showing you a series of links that should be self-explanatory.
-
+-->
 
 
 ## Installation
@@ -28,6 +28,7 @@ to your leiningen `:dependencies`
 
 ## Usage
 
+<!--
 ### 1. Require it
 ```clojure
 (:require [mx.bodyguard.auth :as bg-auth]
@@ -108,6 +109,7 @@ It allows for composability and doesn't tie the routing code (compojure, moustac
 I can understand any objections since it promotes a little bit of duplication (changing your routes will force you to remember to change the security policy).
 
 I'm open for suggestions in how to improve this (e.g. some kind of meta-routing) or optional integration to compojure's routes.
+-->
 
 
 
