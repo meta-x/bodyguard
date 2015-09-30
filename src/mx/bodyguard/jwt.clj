@@ -38,7 +38,7 @@
           (jwt/verify token secret))
       (let [exp (-> token :claims :exp)
             right-now (to-long (now))]
-        (> right-now (* exp 1000)))
+        (> (* exp 1000) right-now))
       false)
   (catch Object e
     false)))
