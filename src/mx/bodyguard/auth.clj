@@ -12,13 +12,13 @@
       (= op-mode :auth))))
 
 (defmulti is-authenticated?
-  (fn [auth-type handler request] auth-type))
+  (fn [config handler request] (:auth-type config)))
 
-(defmethod is-authenticated? :jwt [handler request]
+(defmethod is-authenticated? :jwt [config handler request]
   ; extract token from request and verify its validity
   (let [token (or (:jwt request) ; if wrap-token is used, then this exists
                   (extract-jwt request))] ; otherwise extract the token
-    (valid-jwt? token)))
+    (valid-jwt? token (:jwt-secret config))))
 
 (defn wrap-authentication
   "Authentication middleware: verifies if the target resource+method is
@@ -33,7 +33,7 @@
             route-handler (fn-get-handler request)]
         (if (is-protected? (:operation-mode config) route-handler)
           ; validate that the user is allowed to access the route-handler
-          (if (is-authenticated? (:auth-type) route-handler request)
+          (if (is-authenticated? config route-handler request)
             (next-handler request)
             ((:on-authentication-fail config) request))
           ; unprotected, continue with the processing
