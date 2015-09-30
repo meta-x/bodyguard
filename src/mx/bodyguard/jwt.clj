@@ -48,7 +48,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; extracts and decodes the token from the auth header and stores it in the request map
-(defn wrap-token-to-params [handler error-handler]
+(defn wrap-token-to-request [handler error-handler]
   (fn [request]
     (try+
       (->>
@@ -58,6 +58,12 @@
         (handler))
     (catch Object e
       (error-handler handler request e)))))
+
+(defn wrap-verify-jwt [handler error-handler]
+  (fn [request]
+    ; TODO: assumes token is present in the request as :jwt
+    ; verifies if the jwt is valid, calling error-handler if not; continuing otherwise
+    ))
 
 ; this middleware extracts data from the jwt-oken's claims and adds it into the request's :params
 ; useful for acessing the params without having to dig into the jwt
