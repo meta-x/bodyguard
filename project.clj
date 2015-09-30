@@ -7,6 +7,11 @@
   }
   :dependencies [
     [org.clojure/clojure "1.7.0"]
+    [environ "1.0.1"]
+    [slingshot "0.12.2"]
+    [metosin/ring-http-response "0.6.5"]
+    [clj-jwt "0.1.1"]
+    [clj-time "0.11.0"]
   ]
   :deploy-repositories [
     ["clojars" {:sign-releases false}]
