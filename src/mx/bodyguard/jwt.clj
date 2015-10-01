@@ -6,6 +6,10 @@
             [mx.bodyguard.defaults :refer [default-auth-config]]))
 
 ; TODO: add additional step for ip address validation etc
+; how to do ip verification?
+;   when token is created, the ip is inserted into the claim
+;   when a request comes in, validate the ips
+;   token creation is done on the "user" side, so ip verification is an optional step...
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; helper functions
@@ -88,4 +92,14 @@
           (update-in [:params] merge cs)
           (handler)))
       ; no token, continue processing
+      (handler request))))
+
+(defn wrap-roles-to-request [handler roles-key]
+  (fn [request]
+    (if-let [token (:jwt request)]
+      (let [roles (-> token (:claims) (get roles-key))]
+        (->>
+          roles
+          (assoc request :roles)
+          (handler)))
       (handler request))))
