@@ -2,7 +2,8 @@
   (:require [slingshot.slingshot :refer [try+]]
             [clj-jwt.core :as jwt]
             [clj-time.core :refer [now]]
-            [clj-time.coerce :refer [to-long]]))
+            [clj-time.coerce :refer [to-long]]
+            [mx.bodyguard.defaults :refer [default-auth-config]]))
 
 ; TODO: add additional step for ip address validation etc
 
@@ -47,23 +48,30 @@
 ;;; middleware functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; extracts and decodes the token from the auth header and stores it in the request map
-(defn wrap-token-to-request [handler error-handler]
+; extracts, decodes and validates the token from the auth header
+; stores it in the request map if valid; otherwise, continues processing
+(defn wrap-valid-token-to-request [handler secret]
   (fn [request]
-    (try+
-      (->>
-        request
-        (extract-jwt)
-        (assoc request :jwt)
-        (handler))
-    (catch Object e
-      (error-handler handler request e)))))
+    (if-let [token (extract-jwt request)]
+      (if (valid-jwt? token secret)
+        (->>
+          token
+          (assoc request :jwt)
+          (handler))
+        (handler request))
+      (handler request))))
 
-(defn wrap-verify-jwt [handler error-handler]
+(defn wrap-token-to-request [handler]
   (fn [request]
-    ; TODO: assumes token is present in the request as :jwt
+    ; TODO: extracts and decodes the token from the auth header
+    ; ATTN: does not verify it's validity; for the rare occasions where we want the token and don't care if it's valid or not
+  ))
+
+(defn wrap-verify-jwt-to-request [handler config]
+  (fn [request]
+    ; TODO: assumes token is present in the request as :jwt (i.e. wrap-token-to-request ran before)
     ; verifies if the jwt is valid, calling error-handler if not; continuing otherwise
-    ))
+  ))
 
 ; this middleware extracts data from the jwt-oken's claims and adds it into the request's :params
 ; useful for acessing the params without having to dig into the jwt

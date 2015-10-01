@@ -12,6 +12,8 @@
   (fn [config handler request] (:auth-type config)))
 (defmethod is-authenticated? :jwt [config handler request]
   ; extract token from request and verify its validity
-  (let [token (or (:jwt request) ; if wrap-token is used, then this exists
+  (let [token (or (:jwt request)          ; if wrap-token is used, then this exists
                   (extract-jwt request))] ; otherwise extract the token
+    ; this is executed again when wrap-valid-token-to-request is used
+    ; but that's ok - it's a double check
     (valid-jwt? token (:jwt-secret config))))
