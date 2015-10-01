@@ -100,6 +100,7 @@
       (let [roles (-> token (:claims) (get roles-key))]
         (->>
           roles
+          (map keyword)
           (assoc request :bodgyguard-roles)
           (handler)))
       (handler request))))

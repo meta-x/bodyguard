@@ -4,7 +4,7 @@
 
 (defn- on-authentication-fail [request]
   (status/unauthorized "not authenticated"))
-(defn on-authorization-fail [request]
+(defn- on-authorization-fail [request]
   (status/forbidden "not authorized"))
 
 (def default-auth-config {

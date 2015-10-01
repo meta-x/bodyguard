@@ -14,10 +14,7 @@
   "Authentication middleware: verifies if the target resource+method is
   protected, if the user is authenticated, the default access policy and acts
   accordingly."
-  ([next-handler fn-get-handler]
-    (wrap-authentication next-handler fn-get-handler default-auth-config))
-
-  ([next-handler fn-get-handler config]
+  [next-handler fn-get-handler config]
     (fn [request]
       (let [config (merge default-auth-config config)
             route-handler (fn-get-handler request)]
@@ -27,14 +24,12 @@
             (next-handler request)
             ((:on-authentication-fail config) request))
           ; unprotected, continue with the processing
-          (next-handler request))))))
+          (next-handler request)))))
 
 (defn wrap-authorization
   "Authorization middleware: verifies if the user is authorized to access the
   resource+method and acts accordingly."
-  ([next-handler fn-get-handler]
-    (wrap-authentication next-handler fn-get-handler default-auth-config))
-  ([next-handler fn-get-handler config]
+  [next-handler fn-get-handler config]
     (fn [request]
       (let [config (merge default-auth-config config)
             route-handler (fn-get-handler request)
@@ -43,4 +38,4 @@
         (if (or (empty? required-roles)
                 (is-in-role? current-user-roles required-roles))
           (next-handler request)
-          ((:on-authorization-fail config) request))))))
+          ((:on-authorization-fail config) request)))))
