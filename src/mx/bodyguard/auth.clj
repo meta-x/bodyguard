@@ -35,7 +35,7 @@
   [request]
   ; ATTN: assumes that roles have been injected into the request by someone else
   ; this is probably a custom middleware that ran before
-  (set (:roles request)))
+  (set (:bodgyguard-roles request)))
 
 (defn is-in-role?
   "Is the user in any of the required roles?"
