@@ -3,11 +3,13 @@
             [clojure.set :as cljset]))
 
 (defn is-protected? [op-mode handler]
-  (let [metadata (meta handler)
-        protected? (:protected metadata)]
-    (if-not (nil? protected?)
-      protected?
-      (= op-mode :auth))))
+  (if (nil? handler)
+    false
+    (let [metadata (meta handler)
+          protected? (:protected metadata)]
+      (if-not (nil? protected?)
+        protected?
+        (= op-mode :auth)))))
 
 (defmulti is-authenticated?
   (fn [config handler request] (:auth-type config)))
@@ -26,9 +28,10 @@
 (defn get-route-roles
   "Return the required roles for the handler."
   [handler]
-  (let [metadata (meta handler)
-        roles (:roles metadata)]
-    roles))
+  (if-not (nil? handler)
+    (let [metadata (meta handler)
+          roles (:roles metadata)]
+      roles)))
 
 (defn get-current-user-roles
   "Returns the roles for the current user."
